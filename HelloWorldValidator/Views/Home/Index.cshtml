@@ -1,0 +1,86 @@
+﻿<div>
+    <form id="imageForm" action="api/ImageAnalysis" method="post">
+        <div class="form-group">
+            <label for="imageUrl">Image Url:</label>
+            <input id="imageUrl" type="text" name="imageUrl" class="form-control" />
+        </div>        
+        <button id="submit" type="submit" class="btn btn-primary">Submit <i class="glyphicon glyphicon-cog"></i></button>
+    </form>
+</div>
+<div>
+    <div id="testResult" style="font-weight: bold; margin-top: 20px; margin-bottom: 20px; display: none">
+    </div>
+    <div id="testImage" style="display: none">
+    </div>
+</div>
+
+@section Scripts {
+<script type="text/javascript">
+
+    function showPending() {
+        $("#testResult")
+            .html("<div class='alert alert-info'><i class='glyphicon glyphicon-wrench glyphicon-spin' /> Working on it... </div>")
+            .show();
+    }
+
+    function showError(msg) {
+        $("#testResult")
+            .html("<div class='alert alert-danger'>¯\_(ツ)_/¯ Something went wrong. (" + msg + ")</div>")
+            .show();
+    }
+
+    function showSuccess() {
+        $("#testResult")
+            .html("<div class='alert alert-success'><i class='glyphicon glyphicon-thumbs-up' /> Hello world! </div>")
+            .show();
+    }
+
+    function showFailure() {
+        $("#testResult")
+            .html("<div class='alert alert-warning'><i class='glyphicon glyphicon-thumbs-down' /> Nope, sorry.</div>")
+            .show();
+    }
+
+    $("#imageForm").submit(function (e) {
+
+        showPending();
+
+        var imageUrl = $("#imageUrl").val();
+
+        $("#testImage")            
+            .html("<img class='img-responsive' src='" + imageUrl + "' />")
+            .show();
+
+        var formData = {
+            ImageUrl: imageUrl
+        };
+
+        $.ajax({
+            type: "POST",
+            url: $(this).prop("action"),
+            data: JSON.stringify(formData),
+            dataType: "json",
+            contentType: "application/json"
+        })
+            .done(function (data) {
+                
+                if (data.containsHelloWorld === true) {
+                    showSuccess();
+                }
+
+                else if (data.containsHelloWorld === false && data.isError === false) {
+                     showFailure();
+                }
+                
+                else {
+                    showError(data.errorMessage);
+                }                
+            })
+            .fail(function (jqXHR) {
+                showError("Request failed");
+            });
+
+        e.preventDefault();
+    });
+</script>
+}
