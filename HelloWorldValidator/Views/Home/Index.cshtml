@@ -1,5 +1,5 @@
 ﻿<div>
-    <form id="imageForm" action="api/ImageAnalysis" method="post">
+    <form id="imageForm" asp-controller="api" asp-action="ImageAnalysis" method="post">
         <div class="form-group">
             <label for="imageUrl">Image Url:</label>
             <input id="imageUrl" type="text" name="imageUrl" class="form-control" />
